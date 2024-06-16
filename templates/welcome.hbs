@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.4;
+            color: #555;
+        }
+
+        b {
+            font-weight: bold;
+        }
+
+        blockquote {
+            font-style: italic;
+            color: #777;
+        }
+    </style>
+    <title>Welcome, {{firstName}} {{lastName}}</title>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome to Insight CRM, {{firstName}} {{lastName}}!</h1>
+    <p>Your system administrator has created your account on your behalf.</p>
+    <p>Here are your account details:</p>
+    <p>Username: <b>{{username}}</b></p>
+    <p>Temporary Password: <b>{{tempPassword}}</b></p>
+    <p>Please change your temporary password by clicking <a href="{{resetLink}}">this link</a>.</p>
+    <div>
+        <sub>This email is intended for {{email}}. If you are not the intended recipient, please delete this
+            email.</sub>
+        <sub>This is an automated email from Insight CRM. Please do not reply.</sub>
+    </div>
+</div>
+</body>
+</html>
