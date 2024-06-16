@@ -125,3 +125,10 @@ including its purpose, HTTP method, URL, and any middleware used.
 These routes are defined in the `userRouter` and are used to manage user-related operations within the application. 
 The routes are protected by authentication and authorization middleware to ensure that only authorized users can access 
 them.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Author
+Cody Fingerson
