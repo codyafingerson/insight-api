@@ -12,7 +12,7 @@ export default class AuthController {
      **/
     public static getCurrentUser = expressAsyncHandler(async (req: Request, res: Response) => {
         const token = req.cookies.token;
-
+        
         jwt.verify(token, process.env.JWT_SECRET as string, async (err: any, decoded: {
             id: any;
             isActive: boolean,
