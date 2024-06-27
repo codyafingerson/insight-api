@@ -1,17 +1,16 @@
-import express, { type Application } from 'express';
-import session from 'express-session';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
-import morgan from 'morgan';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import express, { type Application } from 'express';
+import morgan from 'morgan';
 import Database from './config/Database';
 import errorHandler from './middleware/errorHandler';
 
 // Add routes
 import authRouter from "./routes/authRoutes";
-import userRouter from './routes/userRoutes';
 import customerRouter from "./routes/customerRoutes";
+import userRouter from './routes/userRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -28,24 +27,21 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use(cors());
 
-app.use(session({
-    secret: process.env.SESSION_SECRET as string,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true
-    }
-}));
-
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.get('/', (req, res) => {
     res.status(200).json({
         success: true,
-        message: "Insight CRM Web API"
+        message: "Insight CMS Web API",
+        version: "2.0.0",
+        endpoints: {
+            auth: "/api/auth",
+            users: "/api/users",
+            customers: "/api/customers"
+        },
+        documentation: "see source code"
     });
 });
 
