@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
             background-color: #f2f2f2;
             margin: 0;
             padding: 0;
@@ -16,42 +21,63 @@
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
 
         h1 {
-            color: #333;
+            color: #fff;
+            background: linear-gradient(90deg, #FB923C, #EF4444);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
         }
 
         p {
             font-size: 16px;
-            line-height: 1.4;
+            line-height: 1.6;
             color: #555;
+            margin: 10px 0;
         }
 
         b {
             font-weight: bold;
         }
 
-        blockquote {
-            font-style: italic;
-            color: #777;
+        a {
+            color: #EF4444;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        sub {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            margin-top: 20px;
         }
     </style>
     <title>Welcome, {{firstName}} {{lastName}}</title>
 </head>
+
 <body>
-<div class="container">
-    <h1>Welcome to Insight CRM, {{firstName}} {{lastName}}!</h1>
-    <p>Your system administrator has created your account on your behalf.</p>
-    <p>Here are your account details:</p>
-    <p>Username: <b>{{username}}</b></p>
-    <p>Temporary Password: <b>{{tempPassword}}</b></p>
-    <p>Please change your temporary password by clicking <a href="{{resetLink}}">this link</a>.</p>
-    <div>
-        <sub>This email is intended for {{email}}. If you are not the intended recipient, please delete this
-            email.</sub>
-        <sub>This is an automated email from Insight CRM. Please do not reply.</sub>
+    <div class="container">
+        <h1>Insight CMS</h1>
+        <h2>Dear {{firstName}} {{lastName}},</h2>
+        <p>We're thrilled to have you on board! Your account has been created by your system administrator. Below are
+            your temporary login credentials:</p>
+        <p>Username: <b>{{username}}</b></p>
+        <p>Temporary Password: <b>{{tempPassword}}</b></p>
+        <p>Please change your temporary password by clicking <a href="{{resetLink}}">this link</a>.</p>
+        <div>
+            <sub>This email is intended for {{email}}. If you are not the intended recipient, please delete this
+                email.</sub>
+            <sub>This is an automated email from Insight CMS. Please do not reply.</sub>
+        </div>
     </div>
-</div>
 </body>
+
 </html>
