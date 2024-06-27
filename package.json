@@ -1,24 +1,24 @@
 {
-  "name": "web-api",
-  "version": "1.0.0",
-  "description": "",
+  "name": "insight-api",
+  "version": "2.0.0",
+  "description": "A comprehensive solution for managing customer data efficiently and securely.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
+    "dev": "nodemon",
     "clean": "rimraf dist"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/simple-crm-app/web-api.git"
+    "url": "git+https://github.com/codyafingerson/insight-api"
   },
   "author": "Cody Fingerson",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/simple-crm-app/web-api/issues"
+    "url": "https://github.com/codyafingerson/insight-api/issues"
   },
-  "homepage": "https://gitlab.com/simple-crm-app/web-api#readme",
+  "homepage": "https://github.com/codyafingerson/insight-api#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
@@ -45,12 +45,18 @@
     "@types/nodemailer": "^6.4.15",
     "@types/validator": "^13.11.10",
     "body-parser": "^1.20.2",
-    "concurrently": "^8.2.2",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.1",
     "rimraf": "^5.0.7",
+    "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5",
-    "wait-on": "^7.2.0"
+    "typescript": "^5.5.2"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts",
+    "exec": "ts-node src/index.ts"
   }
 }
