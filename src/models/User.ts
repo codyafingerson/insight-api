@@ -2,9 +2,16 @@ import bcrypt from "bcryptjs";
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
 import validator from "validator";
 
+export enum UserRole {
+    SystemAdmin = "system_admin",
+    Administrator = "administrator",
+    Standard = "standard",
+    Audit = "audit"
+}
+
 export interface UserDocument extends Document {
     isActive: boolean;
-    isAdmin: boolean;
+    role: UserRole;
     firstName: string;
     lastName: string;
     username: string;
@@ -22,10 +29,11 @@ export const UserSchema: Schema<UserDocument> = new Schema<UserDocument>({
         required: true,
         default: true
     },
-    isAdmin: {
-        type: Boolean,
+    role: {
+        type: String,
         required: true,
-        default: false
+        enum: Object.values(UserRole),
+        default: UserRole.Standard
     },
     firstName: {
         type: String,
@@ -71,7 +79,6 @@ export const UserSchema: Schema<UserDocument> = new Schema<UserDocument>({
 
 UserSchema.index({ email: 1 }, { unique: true });
 UserSchema.index({ username: 1 }, { unique: true });
-UserSchema.index({ resetPasswordToken: 1 }, { unique: true });
 
 UserSchema.pre<UserDocument>("save", async function (next) {
     if (!this.isModified("password")) {
