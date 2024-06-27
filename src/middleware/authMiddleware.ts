@@ -1,17 +1,18 @@
-import jwt from 'jsonwebtoken';
-import type { NextFunction, Response, Request } from 'express';
-import User from '../models/User';
+import type { NextFunction, Request, Response } from 'express';
 import expressAsyncHandler from 'express-async-handler';
+import jwt from 'jsonwebtoken';
+import User, { UserRole } from '../models/User';
+import UserResponse from '../types/UserResponse';
 
 interface AuthenticatedRequest extends Request {
-    user?: any;
+    user?: UserResponse
 }
 
 /**
  * Protected route middleware.
  * This middleware checks for a token in the request cookies and verifies its validity.
  */
-export const protect = expressAsyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authenticateUser = expressAsyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const token = req.cookies.token;
 
     if (!token) {
@@ -22,7 +23,7 @@ export const protect = expressAsyncHandler(async (req: AuthenticatedRequest, res
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
 
-        req.user = await User.findById((decoded as any).id).select('-password');
+        req.user = await User.findById((decoded as any).id).select('-password') as UserResponse;
 
         if (!req.user) {
             res.status(401).json({ message: 'Authorization failed, user not found' });
@@ -33,20 +34,50 @@ export const protect = expressAsyncHandler(async (req: AuthenticatedRequest, res
     } catch (error) {
         console.error('Token verification error:', error);
         res.status(401).json({ message: 'Authorization failed, token verification unsuccessful' });
+        return;
     }
 });
 
 /**
- * Check if user is an admin by checking the decoded token for admin privileges.
+ * Authorize users by their roles
+ * 
+ * @param {UserRole[]} roles user roles to authorize
+ */
+export const authorizeRole = (roles: UserRole[]) => {
+    return expressAsyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        if (!req.user) {
+            res.status(401).json({ message: 'Unauthorized.' });
+            return;
+        }
+
+        // Ensure that all users with the SystemAdmin role can access any protected route
+        if (req.user.role === UserRole.SystemAdmin) {
+            next();
+            return;
+        } else if (roles.includes(req.user.role)) {
+            next();
+            return;
+        } else {
+            res.status(403).json({ message: 'Forbidden: Insufficient privileges.' });
+            return;
+        }
+    });
+};
+
+/**
+ * Self-check middleware.
+ * This middleware checks if the user is accessing their own data.
  *
  * @param {AuthenticatedRequest} req request object
  * @param res response object
  * @param next next function
  */
-export const admin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    if (req.user && req.user.isAdmin) {
+export const selfCheck = expressAsyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const userId = req.params.id || req.body.id;
+
+    if (req.user && req.user.id === userId) {
         next();
     } else {
-        res.status(403).json({ message: 'Forbidden: Admin privileges required.' });
+        res.status(403).json({ message: 'Forbidden: You can only access your own data.' });
     }
-};
+});
