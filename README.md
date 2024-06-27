@@ -1,14 +1,27 @@
-# Insight CRM Web API
+<div style="display: flex; align-items: center; justify-content: center;">
+  <img src="https://i.ibb.co/qDQmx4q/insight-logo.webp" alt="Alt text" width="105" height="52">
+  <h2 style="margin-left: 10px;">Insight CMS</h2>
+</div>
 
-Insight CRM is a simple to use, minimalistic CRM system that allows you to manage your customers, leads, and 
-opportunities. This API allows you to interact with the CRM system programmatically.
+# Insight CMS Web API
+
+This API provides a comprehensive solution for managing customer data efficiently and securely. It enables users to perform various operations such as creating, reading, updating, and deleting customer information, as well as searching for customers based on different criteria.
+
+## Features
+- Customer CRUD Operations: Create, read, update, and delete customer records.
+- Customer Search: Search for customers using various filters and criteria.
+- Authentication & Authorization: Secure access to API endpoints with robust authentication and role-based authorization mechanisms.
+- User CRUD Operations: Create, read, update, and delete user records. (System administrator roles have access)
+- Data Validation: Ensure the integrity and accuracy of customer data with server-side validation.
+- Scalability: Built to handle a large number of customer records and high traffic with ease.
+- Extensible: Easily extendable to include additional features and integrations as needed.
 
 ## Installation
 ### Prerequisites
 - Node.js v14.17.0 or higher installed on your machine.
 - MongoDB installed on your machine or a MongoDB Atlas account.
 
-1. Clone this repository to your local machine using `git clone https://www.github.com/insight-crm/api.git`.
+1. Clone this repository to your local machine using `git clone https://github.com/codyafingerson/insight-api`.
 2. Navigate to the project directory using `cd api`.
 3. Install the dependencies using `npm install`.
 4. Create a `.env` file in the root of the project directory and add the following environment variables, replacing 
@@ -16,7 +29,7 @@ opportunities. This API allows you to interact with the CRM system programmatica
     ```env
     NODE_ENV=development
     PORT=8000
-    MONGO_URI=mongodb://localhost:27017/insight-crm-api
+    MONGO_URI=mongodb://localhost:27017/insight-cms-api
     JWT_SECRET=foobardoobardoo
     JWT_EXPIRE=30d
     SESSION_SECRET=foobardoobardoo
@@ -25,7 +38,7 @@ opportunities. This API allows you to interact with the CRM system programmatica
     MAIL_PORT=587
     MAIL_USER=username
     MAIL_PASSWORD=password
-    MAIL_FROM=no_reply@insightcrm.com
+    MAIL_FROM=no_reply@insightcms.com
     ```
 
 ## Usage
