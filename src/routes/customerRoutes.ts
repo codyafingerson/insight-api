@@ -1,23 +1,23 @@
 import { Router } from 'express';
-import { protect, admin } from "../middleware/authMiddleware";
+// import { authenticateUser, authorizeAdmin } from "../middleware/authMiddleware";
 import CustomerController from '../controllers/CustomerController';
 
 const customerRouter = Router();
 
-customerRouter.post('/create', protect, CustomerController.createCustomer);
+// customerRouter.post('/create', authenticateUser, CustomerController.createCustomer);
 
-customerRouter.get('/all', protect, CustomerController.getAllCustomers);
+// customerRouter.get('/all', authenticateUser, CustomerController.getAllCustomers);
 
-customerRouter.get('/:id', protect, CustomerController.getCustomerById);
+// customerRouter.get('/:id', authenticateUser, CustomerController.getCustomerById);
 
-customerRouter.put('/search', protect, CustomerController.searchCustomers);
+// customerRouter.put('/search', authenticateUser, CustomerController.searchCustomers);
 
-customerRouter.put('/update/:id', protect, CustomerController.updateCustomer);
+// customerRouter.put('/update/:id', authenticateUser, CustomerController.updateCustomer);
 
-customerRouter.delete('/delete/:id', protect, admin, CustomerController.deleteCustomer);
+// customerRouter.delete('/delete/:id', authenticateUser, authorizeAdmin, CustomerController.deleteCustomer);
 
-customerRouter.post('/send-email/:id', protect, CustomerController.sendEmail);
+// customerRouter.post('/send-email/:id', authenticateUser, CustomerController.sendEmail);
 
-customerRouter.post('/send-email-to-all', protect, admin, CustomerController.sendEmailToAllCustomers);
+// customerRouter.post('/send-email-to-all', authenticateUser, authorizeAdmin, CustomerController.sendEmailToAllCustomers);
 
 export default customerRouter;

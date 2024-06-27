@@ -18,7 +18,7 @@ export default class UserController {
     public static createNewUser = expressAsyncHandler(async (req: Request, res: Response) => {
         const {
             isActive,
-            isAdmin,
+            role,
             firstName,
             lastName,
             username,
@@ -44,7 +44,7 @@ export default class UserController {
 
         const newUser = new User({
             isActive,
-            isAdmin,
+            role,
             firstName,
             lastName,
             username,
@@ -85,7 +85,7 @@ export default class UserController {
             res.status(201).json({
                 id: createdUser._id,
                 isActive: createdUser.isActive,
-                isAdmin: createdUser.isAdmin,
+                role: createdUser.role,
                 firstName: createdUser.firstName,
                 lastName: createdUser.lastName,
                 username: createdUser.username,
@@ -111,7 +111,7 @@ export default class UserController {
                 return {
                     id: user._id,
                     isActive: user.isActive,
-                    isAdmin: user.isAdmin,
+                    role: user.role,
                     firstName: user.firstName,
                     lastName: user.lastName,
                     username: user.username,
@@ -166,7 +166,7 @@ export default class UserController {
 
         if (user) {
             user.isActive = isActive || user.isActive;
-            user.isAdmin = isAdmin || user.isAdmin;
+            user.role = isAdmin || user.role;
             user.firstName = firstName || user.firstName;
             user.lastName = lastName || user.lastName;
             user.username = username || user.username;
@@ -228,77 +228,6 @@ export default class UserController {
             res.status(404);
             throw new Error(`No user found with the ID: ${id}`);
         }
-    });
-
-    /**
-     * Request a password reset.
-     * This method generates a password reset token and sends a password reset email to the user.
-     * @param {Request} req - Express request object.
-     * @param {Response} res - Express response object.
-     */
-    public static requestPasswordReset = expressAsyncHandler(async (req: Request, res: Response) => {
-        const { email } = req.body;
-
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            res.status(404);
-            throw new Error("No user found with this email address.");
-        }
-
-        // Generate reset token
-        const resetToken = crypto.randomBytes(20).toString("hex");
-        const resetTokenExpires = new Date(Date.now() + 3600000); // 1 hour from now
-
-        user.resetPasswordToken = resetToken;
-        user.resetPasswordExpires = resetTokenExpires;
-
-        await user.save();
-
-        // Send reset email
-        const mailService = new MailService();
-        await mailService.sendMail(
-            user.email,
-            "Password Reset Request",
-            "passwordReset",
-            {
-                resetLink: `http://localhost:8000/reset-password?token=${resetToken}`,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                expiresIn: user.resetPasswordExpires.toISOString(),
-            }
-        );
-
-        res.status(200).json({ message: "Password reset email sent." });
-    });
-
-    /**
-     * Reset a user's password.
-     * This method resets a user's password in the database using the provided password reset token and new password.
-     * @param {Request} req - Express request object.
-     * @param {Response} res - Express response object.
-     */
-    public static resetPassword = expressAsyncHandler(async (req: Request, res: Response) => {
-        const { token, newPassword } = req.body;
-
-        const user = await User.findOne({
-            resetPasswordToken: token,
-            resetPasswordExpires: { $gt: Date.now() },
-        });
-
-        if (!user) {
-            res.status(400);
-            throw new Error("Invalid or expired password reset token.");
-        }
-
-        user.password = newPassword;
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpires = undefined;
-
-        await user.save();
-
-        res.status(200).json({ message: "Password has been reset." });
     });
 
     public static sendEmail = expressAsyncHandler(async (req: Request, res: Response) => {

@@ -1,25 +1,31 @@
 import { Router } from 'express';
-import { protect, admin } from "../middleware/authMiddleware";
 import UserController from '../controllers/UserController';
+import { authenticateUser, authorizeRole } from "../middleware/authMiddleware";
+import { UserRole } from '../models/User';
 
 const userRouter = Router();
 
-userRouter.get('/all', protect, admin, UserController.getAllUsers);
+userRouter.use(authenticateUser, authorizeRole([UserRole.Administrator]));
 
-userRouter.post('/create', protect, admin, UserController.createNewUser);
+// Create a new user
+userRouter.post('/', UserController.createNewUser);
 
-userRouter.get('/:id', protect, admin, UserController.getUserById);
+// Get all users
+userRouter.get('/', UserController.getAllUsers);
 
-userRouter.put('/update/:id', protect, admin, UserController.updateUser);
+// Get a user by ID
+userRouter.get('/:id', UserController.getUserById);
 
-userRouter.get('/search', protect, admin, UserController.searchUsers);
+// Update a user
+userRouter.put('/:id', UserController.updateUser);
 
-userRouter.delete('/delete/:id', protect, admin, UserController.deleteUser);
+// Search users
+userRouter.get('/search', UserController.searchUsers);
 
-userRouter.post('/request-password-reset', UserController.requestPasswordReset);
+// Delete a user
+userRouter.delete('/:id', UserController.deleteUser);
 
-userRouter.post('/reset-password', UserController.resetPassword);
-
-userRouter.post('/send-email/:id', protect, admin, UserController.sendEmail);
+// Send an email to a user
+userRouter.post('/:id/send-email', UserController.sendEmail);
 
 export default userRouter;
