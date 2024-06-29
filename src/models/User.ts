@@ -2,6 +2,10 @@ import bcrypt from "bcryptjs";
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
 import validator from "validator";
 
+/**
+ * Enum representing user roles.
+ * @enum {string}
+ */
 export enum UserRole {
     SystemAdmin = "system_admin",
     Administrator = "administrator",
@@ -9,6 +13,10 @@ export enum UserRole {
     Audit = "audit"
 }
 
+/**
+ * Interface representing a user document in MongoDB.
+ * @interface
+ */
 export interface UserDocument extends Document {
     isActive: boolean;
     role: UserRole;
