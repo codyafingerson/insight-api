@@ -1,0 +1,24 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "name": "Insight CMS Web API",
+    "entryPoints": ["src/"],
+    "out": "doc",
+    "entryPointStrategy": "expand",
+    "exclude": [
+        "**/node_modules/**/*", 
+        "**/dist/**/*", 
+        "**/test/**/*", 
+        "**/src/**/index.ts",
+        "**/.env"
+    ],
+    "readme": "README.md",
+    "includeVersion": true,
+    "excludeExternals": true,
+    "pretty": true,
+    "cleanOutputDir": true,
+    "hideGenerator": true,
+    "sort": [
+        "alphabetical"
+    ],
+    
+}
