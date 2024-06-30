@@ -3,10 +3,10 @@ import expressAsyncHandler from "express-async-handler";
 import crypto from "crypto";
 import User from "../models/User";
 import MailService from "../util/MailService";
+import ResponseError from "../util/ResponseError";
 
 /**
- * UserController class
- * This class contains static methods for handling user-related operations.
+ * Controller for handling user related requests.
  */
 export default class UserController {
     /**
@@ -27,19 +27,16 @@ export default class UserController {
         } = req.body;
 
         if (!firstName || !lastName || !username || !email || !password) {
-            res.status(400);
-            throw new Error("Please fill in all fields.");
+            throw new ResponseError(res, 400, "Please provide all required fields.");
         }
 
         const usernameExists = await User.findOne({ username });
         const emailExists = await User.findOne({ email });
 
         if (usernameExists) {
-            res.status(400);
-            throw new Error(`The username ${username} is already in use.`);
+            throw new ResponseError(res, 400, `The username ${username} is already in use.`);
         } else if (emailExists) {
-            res.status(400);
-            throw new Error(`The email ${email} is already in use.`);
+            throw new ResponseError(res, 400, `The email ${email} is already in use.`);
         }
 
         const newUser = new User({
@@ -92,8 +89,7 @@ export default class UserController {
                 email: createdUser.email,
             });
         } else {
-            res.status(400);
-            throw new Error("Invalid user data.");
+            throw new ResponseError(res, 400, "Invalid user data.");
         }
     });
 
@@ -139,8 +135,7 @@ export default class UserController {
         if (user) {
             res.status(200).json(user);
         } else {
-            res.status(404);
-            throw new Error(`No user found with the ID: ${id}`);
+            throw new ResponseError(res, 404, `No user found with the ID: ${id}`);
         }
     });
 
@@ -178,8 +173,7 @@ export default class UserController {
 
             res.status(200).json(updatedUser);
         } else {
-            res.status(404);
-            throw new Error(`No user found with the ID: ${id}`);
+            throw new ResponseError(res, 404, "User not found.");
         }
     });
 
@@ -204,8 +198,7 @@ export default class UserController {
         if (users.length > 0) {
             res.status(200).json(users);
         } else {
-            res.status(404);
-            throw new Error("No users found.");
+            throw new ResponseError(res, 404, "No users found.");
         }
     });
 
@@ -225,11 +218,17 @@ export default class UserController {
                 message: `User ${user.firstName} ${user.lastName} has been deleted.`,
             });
         } else {
-            res.status(404);
-            throw new Error(`No user found with the ID: ${id}`);
+            throw new ResponseError(res, 404, "User not found.");
         }
     });
 
+    /**
+     * Send an email to a user.
+     * 
+     * This method sends an email to a user with the provided subject and body.
+     * @param {Request} req - Express request object.
+     * @param {Response} res - Express response object.
+     */
     public static sendEmail = expressAsyncHandler(async (req: Request, res: Response) => {
         const { id } = req.params;
         const { subject, body } = req.body;
@@ -243,8 +242,7 @@ export default class UserController {
 
             res.status(200).json({ message: "Email sent." });
         } else {
-            res.status(404);
-            throw new Error("User not found.");
+            throw new ResponseError(res, 404, "User not found.");
         }
     });
 }

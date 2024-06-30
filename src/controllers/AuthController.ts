@@ -4,11 +4,14 @@ import expressAsyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
 import MailService from "../util/MailService";
+import ResponseError from "../util/ResponseError";
 
+/**
+ * Controller for handling authentication related requests.
+ */
 export default class AuthController {
     /**
-     * Login a user.
-     * This method logs in a user by checking the provided username and password, and sets a JWT token.
+     * Logs in a user by checking the provided username and password, and sets a JWT token.
      * @param {Request} req - Express request object.
      * @param {Response} res - Express response object.
      */
@@ -16,15 +19,13 @@ export default class AuthController {
         const { username, password } = req.body;
 
         if (!username || !password) {
-            res.status(400).json({ message: "Please provide both a username and password." });
-            return;
+            throw new ResponseError(res, 400, "Please provide username and password.");
         }
 
         const user = await User.findOne({ username });
 
         if (!user) {
-            res.status(401).json({ message: "Invalid username or password." });
-            return;
+            throw new ResponseError(res, 404, "User not found.");
         }
 
         if (user.isPasswordChangeRequired) {
@@ -33,8 +34,7 @@ export default class AuthController {
         }
 
         if (!user.isActive) {
-            res.status(400).json({ message: "User is not active" });
-            return;
+            throw new ResponseError(res, 400, "User is not active.");
         }
 
         if (await user.comparePassword(password)) {
@@ -51,6 +51,7 @@ export default class AuthController {
 
             res.cookie("token", token, {
                 httpOnly: true,
+                signed: true,
                 secure: process.env.NODE_ENV !== 'development',
                 sameSite: "strict",
                 maxAge: 1000 * 60 * 60 * 2 // 2 hours
@@ -64,17 +65,17 @@ export default class AuthController {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     username: user.username,
-                    email: user.email
+                    email: user.email,
+                    isPasswordChangeRequired: user.isPasswordChangeRequired
                 }
             });
         } else {
-            res.status(401).json({ message: "Invalid username or password." });
+            throw new ResponseError(res, 401, "Invalid credentials.");
         }
     });
 
     /**
-     * Logout a user.
-     * This method logs out a user by clearing the JWT token.
+     * Logs out a user by clearing the JWT token from the cookies.
      * @param {Request} req - Express request object.
      * @param {Response} res - Express response object.
      */
@@ -84,8 +85,7 @@ export default class AuthController {
     });
 
     /**
-     * Get the current user.
-     * This method retrieves the current user's details using the JWT token from the cookies.
+     * Gets the current user by checking the JWT token.
      * @param {Request} req - Express request object.
      * @param {Response} res - Express response object.
      **/
@@ -93,8 +93,7 @@ export default class AuthController {
         const token = req.cookies.token;
 
         if (!token) {
-            res.status(401).json({ message: 'No token provided' });
-            return;
+            throw new ResponseError(res, 401, "No token provided.");
         }
 
         try {
@@ -119,15 +118,15 @@ export default class AuthController {
                 res.status(404).json({ message: 'User not found' });
             }
         } catch (err) {
-            res.status(401).json({ message: 'Invalid or expired token' });
+            throw new ResponseError(res, 401, "Invalid or expired token.");
         }
     });
 
     /**
-    * Request a password reset.
-    * This method generates a password reset token and sends a password reset email to the user.
+    * Sends a password reset email to the user with a reset token.
     * @param {Request} req - Express request object.
     * @param {Response} res - Express response object.
+    * @throws Will throw an error if no user is found with the provided email address.
     */
     public static requestPasswordReset = expressAsyncHandler(async (req: Request, res: Response) => {
         const { email } = req.body;
@@ -135,8 +134,7 @@ export default class AuthController {
         const user = await User.findOne({ email });
 
         if (!user) {
-            res.status(404);
-            throw new Error("No user found with this email address.");
+            throw new ResponseError(res, 404, "No user found with this email address.");
         }
 
         // Generate reset token
@@ -167,10 +165,10 @@ export default class AuthController {
     });
 
     /**
-     * Reset a user's password.
-     * This method resets a user's password in the database using the provided password reset token and new password.
+     * Resets the user's password with a new password.
      * @param {Request} req - Express request object.
      * @param {Response} res - Express response object.
+     * @throws Will throw an error if the reset token is invalid or expired.
      */
     public static resetPassword = expressAsyncHandler(async (req: Request, res: Response) => {
         const { token, newPassword } = req.body;
@@ -181,8 +179,7 @@ export default class AuthController {
         });
 
         if (!user) {
-            res.status(400);
-            throw new Error("Invalid or expired password reset token.");
+            throw new ResponseError(res, 400, "Invalid or expired password reset token.");
         }
 
         user.password = newPassword;

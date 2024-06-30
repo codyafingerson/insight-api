@@ -4,13 +4,15 @@ import jwt from 'jsonwebtoken';
 import User, { UserRole } from '../models/User';
 import UserResponse from '../types/UserResponse';
 
+/**
+ * Interface for authenticated requests that contain a user object.
+ */
 interface AuthenticatedRequest extends Request {
     user?: UserResponse
 }
 
 /**
- * Protected route middleware.
- * This middleware checks for a token in the request cookies and verifies its validity.
+ * Middleware to authenticate a user by verifying the JWT token in the request.
  */
 export const authenticateUser = expressAsyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const token = req.cookies.token;
@@ -39,9 +41,9 @@ export const authenticateUser = expressAsyncHandler(async (req: AuthenticatedReq
 });
 
 /**
- * Authorize users by their roles
- * 
- * @param {UserRole[]} roles user roles to authorize
+ * Middleware to authorize a user to access a protected route.
+ * @param {UserRole[]} roles - The roles that the user must have to access the route.
+ * @returns {Function} - The middleware function.
  */
 export const authorizeRole = (roles: UserRole[]) => {
     return expressAsyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -65,12 +67,7 @@ export const authorizeRole = (roles: UserRole[]) => {
 };
 
 /**
- * Self-check middleware.
- * This middleware checks if the user is accessing their own data.
- *
- * @param {AuthenticatedRequest} req request object
- * @param res response object
- * @param next next function
+ * Middleware to check if the user is accessing their own data.
  */
 export const selfCheck = expressAsyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const userId = req.params.id || req.body.id;

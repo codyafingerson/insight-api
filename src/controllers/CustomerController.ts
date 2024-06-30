@@ -2,8 +2,18 @@ import { type Request, type Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import Customer from "../models/Customer";
 import MailService from "../util/MailService";
+import ResponseError from "../util/ResponseError";
 
+/**
+ * Controller for handling customer related requests.
+ */
 export default class CustomerController {
+    /**
+     * Creates a new customer.
+     * @param req - Express request object containing customer data in the body.
+     * @param res - Express response object.
+     * @throws Will throw an error if required fields are missing or if customer data is invalid.
+     */
     public static createCustomer = expressAsyncHandler(async (req: Request, res: Response) => {
         const {
             isActive,
@@ -23,8 +33,7 @@ export default class CustomerController {
         } = req.body;
 
         if (!firstName || !lastName || !email || !phoneNumber || !address) {
-            res.status(400);
-            throw new Error("Please provide all required fields.");
+            throw new ResponseError(res, 400, "Please provide all required fields.");
         }
 
         const customer = new Customer({
@@ -50,31 +59,39 @@ export default class CustomerController {
             if (isEmailAllowed) {
                 const mailService = new MailService();
 
-                await mailService.sendMail(email, "Welcome to the Insight CRM!", "blank", {
-                    body: `Hello ${firstName} ${lastName},\n\nWelcome to the Insight CRM!`
+                await mailService.sendMail(email, "Welcome to the Insight CMS!", "blank", {
+                    body: `Hello ${firstName} ${lastName},\n\nWelcome to the Insight CMS!`
                 });
             }
 
             res.status(201).json(createdCustomer);
         } else {
-            res.status(400);
-            throw new Error("Invalid customer data.");
+            throw new ResponseError(res, 400, "Invalid customer data.");
         }
-
-
     });
 
+    /**
+     * Retrieves all customers.
+     * @param req - Express request object.
+     * @param res - Express response object.
+     * @throws Will throw an error if no customers are found.
+     */
     public static getAllCustomers = expressAsyncHandler(async (req: Request, res: Response) => {
         const customers = await Customer.find({});
 
         if (customers) {
             res.status(200).json(customers);
         } else {
-            res.status(404);
-            throw new Error("No customers found.");
+            throw new ResponseError(res, 404, "No customers found.");
         }
     });
 
+    /**
+     * Retrieves a customer by ID.
+     * @param req - Express request object containing customer ID in the params.
+     * @param res - Express response object.
+     * @throws Will throw an error if the customer is not found.
+     */
     public static getCustomerById = expressAsyncHandler(async (req: Request, res: Response) => {
         const { id } = req.params;
 
@@ -83,11 +100,16 @@ export default class CustomerController {
         if (customer) {
             res.status(200).json(customer);
         } else {
-            res.status(404);
-            throw new Error("Customer not found.");
+            throw new ResponseError(res, 404, "Customer not found.");
         }
     });
 
+    /**
+     * Searches for customers based on a filter.
+     * @param req - Express request object containing filter in the query.
+     * @param res - Express response object.
+     * @throws Will throw an error if no customers are found.
+     */
     public static searchCustomers = expressAsyncHandler(async (req: Request, res: Response) => {
         let { filter } = req.query;
 
@@ -101,11 +123,16 @@ export default class CustomerController {
         if (customers) {
             res.status(200).json(customers);
         } else {
-            res.status(404);
-            throw new Error("No customers found.");
+            throw new ResponseError(res, 404, "No customers found.");
         }
     });
 
+    /**
+     * Updates a customer by ID.
+     * @param req - Express request object containing customer ID in the params and updated data in the body.
+     * @param res - Express response object.
+     * @throws Will throw an error if the customer is not found or if the data is invalid.
+     */
     public static updateCustomer = expressAsyncHandler(async (req: Request, res: Response) => {
         const { id } = req.params;
         const {
@@ -154,15 +181,19 @@ export default class CustomerController {
             if (updatedCustomer) {
                 res.status(200).json(updatedCustomer);
             } else {
-                res.status(400);
-                throw new Error("Invalid customer data.");
+                throw new ResponseError(res, 400, "Invalid customer data.");
             }
         } else {
-            res.status(404);
-            throw new Error("Customer not found.");
+            throw new ResponseError(res, 404, "Customer not found.");
         }
     });
 
+    /**
+     * Deletes a customer by ID.
+     * @param req - Express request object containing customer ID in the params.
+     * @param res - Express response object.
+     * @throws Will throw an error if the customer is not found.
+     */
     public static deleteCustomer = expressAsyncHandler(async (req: Request, res: Response) => {
         const { id } = req.params;
 
@@ -171,11 +202,16 @@ export default class CustomerController {
         if (customer) {
             res.status(200).json({ message: "Customer deleted." });
         } else {
-            res.status(404);
-            throw new Error("Customer not found.");
+            throw new ResponseError(res, 404, "Customer not found.");
         }
     });
 
+    /**
+     * Sends an email to a specific customer by ID.
+     * @param req - Express request object containing customer ID in the params and email subject and body in the body.
+     * @param res - Express response object.
+     * @throws Will throw an error if the customer is not found.
+     */
     public static sendEmail = expressAsyncHandler(async (req: Request, res: Response) => {
         const { id } = req.params;
         const { subject, body } = req.body;
@@ -189,11 +225,16 @@ export default class CustomerController {
 
             res.status(200).json({ message: "Email sent." });
         } else {
-            res.status(404);
-            throw new Error("Customer not found.");
+            throw new ResponseError(res, 404, "Customer not found.");
         }
     });
 
+    /**
+     * Sends an email to all customers.
+     * @param req - Express request object containing email subject and body in the body.
+     * @param res - Express response object.
+     * @throws Will throw an error if no customers are found.
+     */
     public static sendEmailToAllCustomers = expressAsyncHandler(async (req: Request, res: Response) => {
         const { subject, body } = req.body;
 
@@ -208,8 +249,7 @@ export default class CustomerController {
 
             res.status(200).json({ message: "Email sent to all customers." });
         } else {
-            res.status(404);
-            throw new Error("No customers found.");
+            throw new ResponseError(res, 404, "No customers found.");
         }
     });
 }

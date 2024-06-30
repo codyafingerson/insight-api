@@ -31,6 +31,10 @@ export interface UserDocument extends Document {
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
+/**
+ * The user schema containing the fields for a user document.
+ * @type {Schema}
+ */
 export const UserSchema: Schema<UserDocument> = new Schema<UserDocument>({
     isActive: {
         type: Boolean,

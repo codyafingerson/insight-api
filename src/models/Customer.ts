@@ -1,5 +1,8 @@
 import mongoose, { Document, Schema } from "mongoose";
 
+/**
+ * @interface CustomerDocument - Represents a customer document stored in the database
+ */
 export interface CustomerDocument extends Document {
     isActive: boolean;
     firstName: string;
