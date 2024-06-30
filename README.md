@@ -67,7 +67,7 @@ npm run dev
 }
 ```
 7. Next, you will need to create a user account to access the API. 
-   - **NOTE**: Due to ALL user related actions being restricted to user's with system administrator or administrator roles, you will need to visit the [userRoutes](./src/routes/userRoutes.ts#8) file, and comment out line 8 before proceeding.
+   - **NOTE**: Due to ALL user related actions being restricted to user's with system administrator or administrator roles, you will need to visit the [userRoutes](./src/routes/userRoutes.ts#L8) file, and comment out line 8 before proceeding.
     1. Send a `POST` request to `http://localhost:8000/api/users` with the following JSON payload:
    ```json
    {
@@ -82,7 +82,7 @@ npm run dev
    ```
    If your request was successful, and you entered a valid email address, you should receive an email confirmation that your account has been created.
    * Since this project is still in development, you will need to access your database, and modify the `isPasswordChangeRequired` field to false in order to access the API.
-   * Remember to uncomment line 8 in the [userRoutes](./src/routes/userRoutes.ts#8) file to re-enable the authorization middleware!
+   * Remember to uncomment line 8 in the [userRoutes](./src/routes/userRoutes.ts#L8) file to re-enable the authorization middleware!
 
 ## Routes (not complete)
 
