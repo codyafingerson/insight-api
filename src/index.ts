@@ -29,7 +29,7 @@ app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET as string));
 
 app.get('/', (req, res) => {
     res.status(200).json({
