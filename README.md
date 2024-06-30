@@ -4,6 +4,16 @@
 
 Insight Customer Management System (CMS) Web API is a robust and scalable solution designed to manage customer data efficiently and securely. This API allows users to perform various operations such as creating, reading, updating, and deleting customer information. It also includes features like authentication and authorization, user management, data validation, and more. The API is built using Node.js, Express, and MongoDB, ensuring high performance and reliability. The documentation for this API can be found at [Insight CMS API Documentation](https://codyafingerson.github.io/insight-api/).
 
+## Features
+- Customer CRUD Operations: Create, read, update, and delete customer records.
+- Customer Search: Search for customers using various filters and criteria.
+- Authentication & Authorization: Secure access to API endpoints with robust authentication and role-based authorization mechanisms.
+- User CRUD Operations: Create, read, update, and delete user records. (System administrator roles have access)
+- Data Validation: Ensure the integrity and accuracy of customer data with server-side validation.
+- Scalability: Built to handle a large number of customer records and high traffic with ease.
+- Extensible: Easily extendable to include additional features and integrations as needed.
+
+
 ### Prerequisites
 1. Node.js must be installed on your machine. You can download it from [Node.js](https://nodejs.org/).
 2. MongoDB must be installed on your machine. You can download it from [MongoDB](https://www.mongodb.com/try/download/community).
