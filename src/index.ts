@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
             users: "/api/users",
             customers: "/api/customers"
         },
-        documentation: "see source code"
+        documentation: "https://codyafingerson.github.io/insight-api"
     });
 });
 
