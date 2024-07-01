@@ -25,7 +25,10 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
-app.use(cors());
+app.use(cors({
+    origin: process.env.CORS_ORIGIN as string,
+    credentials: true
+}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
