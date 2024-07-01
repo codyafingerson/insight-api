@@ -25,7 +25,7 @@ export default class AuthController {
         const user = await User.findOne({ username });
 
         if (!user) {
-            throw new ResponseError(res, 404, "User not found.");
+            throw new ResponseError(res, 404, "Invalid credentials");
         }
 
         if (user.isPasswordChangeRequired) {
@@ -53,7 +53,7 @@ export default class AuthController {
                 httpOnly: true,
                 signed: true,
                 secure: process.env.NODE_ENV !== 'development',
-                sameSite: "strict",
+                sameSite: process.env.NODE_ENV === 'development' ? 'lax' : 'none',
                 maxAge: 1000 * 60 * 60 * 2 // 2 hours
             });
 
