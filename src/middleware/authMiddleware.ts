@@ -15,7 +15,7 @@ interface AuthenticatedRequest extends Request {
  * Middleware to authenticate a user by verifying the JWT token in the request.
  */
 export const authenticateUser = expressAsyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const token = req.cookies.token;
+    const { token } = req.signedCookies;
 
     if (!token) {
         res.status(401).json({ message: 'Authorization failed, no token provided' });
